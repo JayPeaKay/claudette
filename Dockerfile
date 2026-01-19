@@ -2,13 +2,17 @@ FROM ubuntu:latest
 
 RUN userdel -r ubuntu
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive \
-    USER=claudette \
+# Set environment variables for build
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set environment variables for non-root user
+ENV USER=claudette \
     UID=1000 \
     GID=1000 \
-    HOME=/home/claudette \
-    CLAUDE_CONFIG_DIR=/home/claudette/.claude \
+    HOME=/home/claudette
+
+# Set environment variables for mountpoints
+ENV CLAUDE_CONFIG_DIR=${HOME}/.claude \
     WORKSPACE=${HOME}/workspace
 
 # Install dependencies
@@ -22,7 +26,7 @@ RUN apt-get update && \
 
 # Create non-root user
 RUN groupadd -g ${GID} ${USER} && \
-    useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USER}
+    useradd -m -u ${UID} -g ${GID} -d ${HOME} -s /bin/bash ${USER}
 
 # Create config directory mount point
 RUN mkdir -p ${CLAUDE_CONFIG_DIR} && chmod +x ${CLAUDE_CONFIG_DIR}
